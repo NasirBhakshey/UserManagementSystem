@@ -1,8 +1,7 @@
 package com.project.usermanagementsystem.Controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,8 +19,6 @@ import com.project.usermanagementsystem.Repository.UserRepository;
 import com.project.usermanagementsystem.Services.UserImplements;
 // import com.project.usermanagementsystem.model.JwtRequest;
 // import com.project.usermanagementsystem.model.JwtResponse;
-
-import io.micrometer.common.lang.NonNull;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -51,8 +48,6 @@ public class MainController {
         boolean user1 = userImplements.Loginuser(user.getEmail(), user.getPassword());
 
         User user2 = userRepository.findByemail(user.getEmail()).get();
-
-        String str = "Invalid User...";
 
         if (user1) {
             String token = jwtHelper.generateToken(user.getEmail(), user2.getPassword());
