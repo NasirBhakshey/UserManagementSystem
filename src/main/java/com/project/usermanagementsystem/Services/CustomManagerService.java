@@ -9,26 +9,25 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.project.usermanagementsystem.Repository.UserRepository;
+import com.project.usermanagementsystem.Entities.Manager;
+import com.project.usermanagementsystem.Repository.ManagerRepository;
 
-@Service("customUserService")
-public class CustomUserService implements UserDetailsService {
+@Service("customManagerService")
+public class CustomManagerService implements UserDetailsService{
 
     @Autowired
-    private UserRepository userRepository;
+    private ManagerRepository managerRepository;
 
-    public CustomUserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public CustomManagerService(ManagerRepository managerRepository) {
+        this.managerRepository = managerRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
-        com.project.usermanagementsystem.Entities.User user = userRepository.findByemail(email)
+        Manager manager = managerRepository.findByemail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
+        return new org.springframework.security.core.userdetails.User(manager.getEmail(), manager.getPassword(),
                 Collections.emptyList());
-
     }
 
 }

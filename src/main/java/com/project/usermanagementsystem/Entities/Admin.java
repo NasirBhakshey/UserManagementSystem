@@ -21,7 +21,7 @@ import lombok.Setter;
 @Builder
 @Entity
 @Table
-public class User{
+public class Admin {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,5 +39,5 @@ public class User{
     private String password;
     
     private String roles;
-    
+
 }

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <body>
+        <h2>Welcome <span th:text="${user.name}"></span>!</h2>
+        <div>
+            <!-- Your dashboard content here -->
+            <a th:href="@{/api/auth/logout}">Logout</a>
+        </div>
+    </body>
+</body>
+
+</html>

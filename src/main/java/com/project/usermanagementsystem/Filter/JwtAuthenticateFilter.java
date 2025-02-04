@@ -2,6 +2,7 @@ package com.project.usermanagementsystem.Filter;
 
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,6 +12,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.project.usermanagementsystem.Helper.JwtHelper;
+import com.project.usermanagementsystem.Services.CustomAdminService;
+import com.project.usermanagementsystem.Services.CustomManagerService;
+import com.project.usermanagementsystem.Services.CustomUserService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,12 +27,16 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
     @Autowired
     private JwtHelper jwtHelper;
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+    private CustomUserService customUserService;
+    private CustomManagerService customManagerService;
+    private CustomAdminService customAdminService;
 
-    public JwtAuthenticateFilter(JwtHelper jwtHelper, UserDetailsService userDetailsService) {
+    public JwtAuthenticateFilter(JwtHelper jwtHelper,CustomUserService customUserService,CustomManagerService customManagerService
+    , CustomAdminService customAdminService) {
         this.jwtHelper = jwtHelper;
-        this.userDetailsService = userDetailsService;
+        this.customUserService = customUserService;
+        this.customManagerService=customManagerService;
+        this.customManagerService=customManagerService;
     }
 
     @Override
@@ -43,7 +51,14 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
             String username = jwtHelper.extractUsername(token);
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                UserDetails userDetails;
+                if(username.startsWith("user")){
+                    userDetails= customUserService.loadUserByUsername(username);
+                }else if(username.startsWith("admin")){
+                    userDetails= customAdminService.loadUserByUsername(username);
+                } else{
+                    userDetails= customManagerService.loadUserByUsername(username);
+                } 
                 if (jwtHelper.validateToken(token, userDetails.getUsername())) {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
