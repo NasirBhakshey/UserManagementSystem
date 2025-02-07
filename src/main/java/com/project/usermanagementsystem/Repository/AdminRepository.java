@@ -8,6 +8,8 @@ import com.project.usermanagementsystem.Entities.Admin;
 
 public interface AdminRepository extends JpaRepository<Admin,Integer>{
 
-    public Optional<Admin> findByemail(String email);
+    public Optional<Admin> findByEmail(String email);
+
+    //public Optional<Admin> findByName(String name);
 
 }

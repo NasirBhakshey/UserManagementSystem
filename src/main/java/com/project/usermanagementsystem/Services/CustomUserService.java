@@ -1,9 +1,12 @@
 package com.project.usermanagementsystem.Services;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,9 +29,9 @@ public class CustomUserService implements UserDetailsService {
 
         com.project.usermanagementsystem.Entities.User user = userRepository.findByemail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                System.out.println("UserName :"+user.getName()+" Roles : "+user.getRoles());
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
-                Collections.emptyList());
-
+                List.of(new SimpleGrantedAuthority(user.getRoles())));
     }
 
 }

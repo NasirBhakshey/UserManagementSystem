@@ -1,13 +1,17 @@
 package com.project.usermanagementsystem.Filter;
 
 import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -20,24 +24,23 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class JwtAuthenticateFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtHelper jwtHelper;
 
+    @Autowired
     private CustomUserService customUserService;
-    private CustomManagerService customManagerService;
+    @Autowired
     private CustomAdminService customAdminService;
+    @Autowired
+    private CustomManagerService customManagerService;
 
-    public JwtAuthenticateFilter(JwtHelper jwtHelper,CustomUserService customUserService,CustomManagerService customManagerService
-    , CustomAdminService customAdminService) {
-        this.jwtHelper = jwtHelper;
-        this.customUserService = customUserService;
-        this.customManagerService=customManagerService;
-        this.customManagerService=customManagerService;
-    }
+    private static final Logger log = LoggerFactory.getLogger(JwtAuthenticateFilter.class);
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
@@ -49,22 +52,42 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer")) {
             String token = authHeader.substring(7);
             String username = jwtHelper.extractUsername(token);
+            String role = jwtHelper.extractRole(token).toUpperCase();
+
+            logger.debug("Extracted username from token: " + username);
+            System.out.println("Extracted username from token: " + username);
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails;
-                if(username.startsWith("user")){
-                    userDetails= customUserService.loadUserByUsername(username);
-                }else if(username.startsWith("admin")){
-                    userDetails= customAdminService.loadUserByUsername(username);
-                } else{
-                    userDetails= customManagerService.loadUserByUsername(username);
-                } 
-                if (jwtHelper.validateToken(token, userDetails.getUsername())) {
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
+
+            UserDetails userDetails = null;
+            System.out.println("equal roles : " + role);
+
+            // Choose the correct UserDetailsService based on role
+            switch (role) {
+                case "ADMIN":
+                    userDetails = customAdminService.loadUserByUsername(username);
+                    break;
+                case "MANAGER":
+                    userDetails = customManagerService.loadUserByUsername(username);
+                    break;
+                case "USER":
+                    userDetails = customUserService.loadUserByUsername(username);
+                    break;
+                default:
+                    throw new UsernameNotFoundException("Invalid role: " + role);
             }
+
+            if (jwtHelper.validateToken(token, userDetails.getUsername())) {
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }else{
+                System.out.println("Invalid Validatetoken");
+            }
+        }
         }
         filterChain.doFilter(request, response);
     }

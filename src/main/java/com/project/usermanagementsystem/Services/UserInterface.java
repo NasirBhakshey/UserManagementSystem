@@ -10,7 +10,7 @@ public interface UserInterface {
 
     public boolean updateUser(User user, int id);
 
-    public String Loginuser(String email, String pass);
+    public String Loginuser(String name, String pass);
 
     public List<User> getlldetails();
 

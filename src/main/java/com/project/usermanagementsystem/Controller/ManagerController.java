@@ -48,12 +48,12 @@ public class ManagerController {
 
     @GetMapping("/loginmanager")
     public ModelAndView loginPage() {
-        return new ModelAndView("login", "manager", new Manager());
+        return new ModelAndView("manager_login", "manager", new Manager());
     }
 
     @PostMapping(value = "/login-manager")
     public ResponseEntity<?> loginpage(@RequestBody(required = false) Manager jsonManager, HttpSession session,
-            @ModelAttribute(binding = false) Manager manager1) {
+            @ModelAttribute("formmanager") Manager formmanager) {
 
         Manager manager;
         if (jsonManager != null) {
@@ -61,7 +61,7 @@ public class ManagerController {
             manager = jsonManager;
         } else {
             // Handle form data request
-            manager = manager1;
+            manager = formmanager;
         }
 
         if (manager == null || manager.getEmail() == null || manager.getPassword() == null) {
@@ -75,26 +75,21 @@ public class ManagerController {
 
             session.setAttribute("manager", manager3);
 
-            // ModelAndView modelAndView = new ModelAndView("redirect:/api/auth/dashboard");
             JwtToken jwtToken = JwtToken.builder().name(manager3.getName()).JwtToken(manager2).build();
             return ResponseEntity.status(HttpStatus.OK).body(jwtToken);
-            // return modelAndView;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
-            // ModelAndView modelAndView = new ModelAndView("login");
-            // modelAndView.addObject("error", "Invalid credentials");
-            // return modelAndView;
         }
     }
 
-    @GetMapping("/dashboard")
+    @GetMapping("/managerdashboard")
     public ModelAndView dashboard(HttpSession session) {
-        Manager manager = (Manager) session.getAttribute("user");
+        Manager manager = (Manager) session.getAttribute("manager");
         if (manager == null) {
-            return new ModelAndView("redirect:/api/auth/login");
+            return new ModelAndView("redirect:/api/manager/loginmanager");
         }
-        ModelAndView modelAndView = new ModelAndView("dashboard");
-        modelAndView.addObject("user", manager);
+        ModelAndView modelAndView = new ModelAndView("manager_dashboard");
+        modelAndView.addObject("manager", manager);
         return modelAndView;
     }
 

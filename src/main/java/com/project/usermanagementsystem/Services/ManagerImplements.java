@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,9 @@ public class ManagerImplements implements ManagerInterface{
 
     @Autowired
     private JwtHelper jwtHelper;
+
+    @Autowired
+    private CustomManagerService customManagerService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -54,7 +58,8 @@ public class ManagerImplements implements ManagerInterface{
         if(!isMatch){
             throw new RuntimeException("Invalid password");
         }
-        return jwtHelper.generateToken(email, pass);
+        UserDetails userDetails=customManagerService.loadUserByUsername(email);
+        return jwtHelper.generateToken(userDetails, manager.getRoles());
     }
 
     @Override

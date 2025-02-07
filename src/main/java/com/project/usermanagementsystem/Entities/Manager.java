@@ -35,4 +35,6 @@ public class Manager {
     // @NotBlank(message = "Password is required")
     private String password;
 
+    private String roles;
+
 }

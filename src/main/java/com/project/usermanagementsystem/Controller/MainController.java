@@ -18,11 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.project.usermanagementsystem.Entities.JwtToken;
 import com.project.usermanagementsystem.Entities.User;
 import com.project.usermanagementsystem.Helper.JwtHelper;
-import com.project.usermanagementsystem.Repository.AdminRepository;
-import com.project.usermanagementsystem.Repository.ManagerRepository;
 import com.project.usermanagementsystem.Repository.UserRepository;
-import com.project.usermanagementsystem.Services.AdminImplements;
-import com.project.usermanagementsystem.Services.ManagerImplements;
 import com.project.usermanagementsystem.Services.UserImplements;
 // import com.project.usermanagementsystem.model.JwtRequest;
 // import com.project.usermanagementsystem.model.JwtResponse;
@@ -58,7 +54,7 @@ public class MainController {
 
     @PostMapping(value = "/login-page")
     public ResponseEntity<?> loginpage(@RequestBody(required = false) User jsonUser, HttpSession session,
-            @RequestParam(required = false) String email, @RequestParam(required = false) String password) {
+            @ModelAttribute("user") User formUser) {
 
         User user;
         if (jsonUser != null) {
@@ -66,9 +62,7 @@ public class MainController {
             user = jsonUser;
         } else {
             // Handle form data request
-            user = new User();
-            user.setEmail(email);
-            user.setPassword(password);
+            user = formUser;
         }
 
         if (user == null || user.getEmail() == null || user.getPassword() == null) {
@@ -107,6 +101,7 @@ public class MainController {
 
     @GetMapping("/view-users")
     public List<User> getalldetails() {
+        System.out.println("Display");
         return userImplements.getlldetails();
     }
 

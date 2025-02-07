@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.project.usermanagementsystem.Entities.User;
@@ -18,6 +19,9 @@ public class UserImplements implements UserInterface {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private CustomUserService customUserService;
 
     @Autowired
     private JwtHelper jwtHelper;
@@ -42,16 +46,17 @@ public class UserImplements implements UserInterface {
 
     @Override
     public String Loginuser(String email, String pass) {
-        Optional<User> optional=userRepository.findByemail(email);
-        if(optional.isEmpty()){
+        Optional<User> optional = userRepository.findByemail(email);
+        if (optional.isEmpty()) {
             throw new RuntimeException("User not found");
         }
-        User user=optional.get();
-        boolean isMatch=passwordEncoder.matches(pass, user.getPassword());
-        if(!isMatch){
+        User user = optional.get();
+        boolean isMatch = passwordEncoder.matches(pass, user.getPassword());
+        if (!isMatch) {
             throw new RuntimeException("Invalid password");
         }
-        return jwtHelper.generateToken(email, pass);
+        UserDetails userDetails = customUserService.loadUserByUsername(email);
+        return jwtHelper.generateToken(userDetails, user.getRoles());
 
     }
 

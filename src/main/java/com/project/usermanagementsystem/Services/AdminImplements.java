@@ -4,16 +4,16 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.project.usermanagementsystem.Entities.Admin;
-import com.project.usermanagementsystem.Entities.User;
 import com.project.usermanagementsystem.Helper.JwtHelper;
 import com.project.usermanagementsystem.Repository.AdminRepository;
 
 @Service
-public class AdminImplements implements AdminInterface{
+public class AdminImplements implements AdminInterface {
 
     @Autowired
     private AdminRepository adminRepository;
@@ -22,8 +22,10 @@ public class AdminImplements implements AdminInterface{
     private JwtHelper jwtHelper;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private CustomAdminService customAdminService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Admin InsertAdmin(Admin admin) {
@@ -44,19 +46,20 @@ public class AdminImplements implements AdminInterface{
 
     @Override
     public String LoginAdmin(String email, String pass) {
-        Optional<Admin> optional=adminRepository.findByemail(email);
-        if(optional.isEmpty()){
+        Optional<Admin> optional = adminRepository.findByEmail(email);
+        if (optional.isEmpty()) {
             throw new RuntimeException("Admin not found");
         }
-        Admin admin=optional.get();
-        boolean isMatch=passwordEncoder.matches(pass, admin.getPassword());
-        if(!isMatch){
+        Admin admin = optional.get();
+        boolean isMatch = passwordEncoder.matches(pass, admin.getPassword());
+        if (!isMatch) {
             throw new RuntimeException("Invalid password");
         }
-        return jwtHelper.generateToken(email, pass);
+        UserDetails userDetails=customAdminService.loadUserByUsername(email);
+        return jwtHelper.generateToken(userDetails, admin.getRoles());
     }
 
-    @Override
+    @Override   
     public List<Admin> getlldetails() {
         return adminRepository.findAll();
     }

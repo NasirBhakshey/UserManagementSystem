@@ -28,16 +28,16 @@ public class User{
     @Column
     private Integer id;
 
-    @NotBlank(message = "Name is required")
+    // @NotBlank(message = "Name is required")
     private String name;
 
-    @Email(message = "Please provide a valid email address")
-    @NotBlank(message = "Email is required")
+    // @Email(message = "Please provide a valid email address")
+    // @NotBlank(message = "Email is required")
     private String email;
 
-    @NotBlank(message = "Password is required")
+    // @NotBlank(message = "Password is required")
     private String password;
-    
+
     private String roles;
     
 }
