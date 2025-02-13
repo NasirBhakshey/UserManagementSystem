@@ -65,10 +65,10 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
             // Choose the correct UserDetailsService based on role
             switch (role) {
                 case "ADMIN":
-                    userDetails = customAdminService.loadUserByUsername(username);
+                    userDetails = customUserService.loadUserByUsername(username);
                     break;
                 case "MANAGER":
-                    userDetails = customManagerService.loadUserByUsername(username);
+                    userDetails = customUserService.loadUserByUsername(username);
                     break;
                 case "USER":
                     userDetails = customUserService.loadUserByUsername(username);
