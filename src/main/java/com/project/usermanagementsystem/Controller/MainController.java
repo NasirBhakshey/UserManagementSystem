@@ -91,12 +91,23 @@ public class MainController {
     @GetMapping("/dashboard")
     public ModelAndView dashboard(HttpSession session) {
         User user = (User) session.getAttribute("user");
-        if (user == null) {
-            return new ModelAndView("redirect:/api/auth/login");
+        String getrole=user.getRoles().toUpperCase();
+        switch(getrole){
+            case "ADMIN":
+            ModelAndView modelAndView = new ModelAndView("dashboard");
+            modelAndView.addObject("user", user);
+            return modelAndView;
+            case "MANAGER":
+            ModelAndView modelAndView1 = new ModelAndView("dashboard");
+            modelAndView1.addObject("user", user);
+            return modelAndView1;
+            case "USER":
+            ModelAndView modelAndView2 = new ModelAndView("dashboard");
+            modelAndView2.addObject("user", user);
+            return modelAndView2;
+            default:
+                return new ModelAndView("redirect:/api/auth/login");
         }
-        ModelAndView modelAndView = new ModelAndView("dashboard");
-        modelAndView.addObject("user", user);
-        return modelAndView;
     }
 
     @GetMapping("/view-users")
