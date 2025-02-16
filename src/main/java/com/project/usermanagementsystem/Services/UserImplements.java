@@ -31,6 +31,7 @@ public class UserImplements implements UserInterface {
 
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setRoles("User");
             return userRepository.save(user);
         } catch (Exception e) {
             e.printStackTrace();
@@ -40,8 +41,18 @@ public class UserImplements implements UserInterface {
 
     @Override
     public boolean updateUser(User user, int id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateUser'");
+        User user2=searchbyID(id);
+        if(user2!=null){
+            user2.setName(user.getName());
+            user2.setEmail(user.getEmail());
+            user2.setPassword(passwordEncoder.encode(user.getPassword()));
+            user2.setRoles(user.getRoles());
+            userRepository.save(user2);
+            return true;
+        }else{
+            return false;
+        }
+
     }
 
     @Override
@@ -67,14 +78,23 @@ public class UserImplements implements UserInterface {
 
     @Override
     public boolean deleteUser(int id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteUser'");
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            userRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     public User searchbyID(int id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'searchbyID'");
+        Optional<User> optional = userRepository.findById(id);
+        if (optional.isPresent()) {
+            return optional.get();
+        } else {
+            return null;
+        }
     }
 
 }

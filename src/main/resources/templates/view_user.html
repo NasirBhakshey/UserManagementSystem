@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div class="message-container">
+        <h3 class="success-message" th:if="${Successmsg}" th:text="${Successmsg}"></h3>
+        <h3 class="error-message" th:if="${errormsg}" th:text="${errormsg}"></h3>
+    </div>
+    <table border="2" align="center">
+        <tr>
+            <th>User-ID</th>
+            <th>User-Name</th>
+            <th>User-Email</th>
+            <th>User-Roles</th>
+            <th>Action</th>
+        </tr>
+        <tr th:each="view:${listuser}">
+            <td><span th:text="${view.id}"></span></td>
+            <td><span th:text="${view.name}"></span></td>
+            <td><span th:text="${view.email}"></span></td>
+            <td><span th:text="${view.roles}"></span></td>
+            <td><a th:href="@{/api/auth/view/delete/{id}(id=${view.id})}">Delete</a>
+                <a th:href="@{/api/auth/view/edit/{id}(id=${view.id})}">Edit</a>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

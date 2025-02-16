@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-
 <body>
-    <h2>Welcome Manager Dashboard....<span th:text="${manager.name}"></span>!</h2>
+    <h2>Welcome Admin Dashboard....<span th:text="${admin.name}"></span>!</h2>
     <div>
         <!-- Your dashboard content here -->
         <a th:href="@{/api/auth/logout}">Logout</a>
     </div>
+    <a href="/api/auth/reg-page">Create User</a>
+    <a href="/api/auth/view-users">View-User</a>
 </body>
-
 </html>

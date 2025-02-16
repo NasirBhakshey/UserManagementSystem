@@ -44,15 +44,16 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/auth/login-page", "/api/auth/create-user",
-                                "/api/auth/dashboard")
+                        .requestMatchers("/api/auth/loginpage", "/api/auth/login-page", "/api/auth/create-user",
+                        "/api/auth/reg-page","/api/auth/dashboard","/api/auth/view-users","/api/auth/delete/{id}",
+                        "/api/auth/view/delete/{id}","/api/auth/view/edit/{id}","/api/auth/view/update")
                         .permitAll()
-                        .requestMatchers("/api/manager/create-manager", "/api/manager/login-manager",
-                                "/api/manager/loginmanager", "/api/manager/managerdashboard")
-                        .permitAll()
-                        .requestMatchers("/api/admin/create-admin", "/api/admin/loginadmin",
-                                "/api/admin/login-admin", "/api/admin/admindashboard")
-                        .permitAll()
+                        // .requestMatchers("/api/manager/create-manager", "/api/manager/login-manager",
+                        //         "/api/manager/loginmanager", "/api/manager/managerdashboard")
+                        // .permitAll()
+                        // .requestMatchers("/api/admin/create-admin", "/api/admin/loginadmin",
+                        //         "/api/admin/login-admin", "/api/admin/admindashboard")
+                        // .permitAll()
                         .requestMatchers("/css/**", "/js/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
