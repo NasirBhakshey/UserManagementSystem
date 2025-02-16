@@ -5,17 +5,14 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,11 +21,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.project.usermanagementsystem.Entities.JwtToken;
 import com.project.usermanagementsystem.Entities.User;
-import com.project.usermanagementsystem.Helper.JwtHelper;
 import com.project.usermanagementsystem.Repository.UserRepository;
 import com.project.usermanagementsystem.Services.UserImplements;
-// import com.project.usermanagementsystem.model.JwtRequest;
-// import com.project.usermanagementsystem.model.JwtResponse;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -39,13 +33,10 @@ public class MainController {
     @Autowired
     private UserImplements userImplements;
     @Autowired
-    private JwtHelper jwtHelper;
-    @Autowired
     private UserRepository userRepository;
 
-    public MainController(UserImplements userImplements, JwtHelper jwtHelper, UserRepository userRepository) {
+    public MainController(UserImplements userImplements, UserRepository userRepository) {
         this.userImplements = userImplements;
-        this.jwtHelper = jwtHelper;
         this.userRepository = userRepository;
     }
 
