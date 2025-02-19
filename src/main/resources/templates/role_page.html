@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="register-container">
+        <div class="message-container">
+            <h3 class="success-message" th:if="${Successmsg}" th:text="${Successmsg}"></h3>
+            <h3 class="error-message" th:if="${errormsg}" th:text="${errormsg}"></h3>
+        </div>
+
+        <form id="registerform" class="register-form" th:action="@{/api/auth/rolepage}" th:object="${role}"
+            method="post">
+            <h2>Assign-Role</h2>
+            <div class="input-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" th:field="*{name}" required>
+            </div>
+            <button type="submit" class="register-button">Assign</button>
+        </form>
+    </div>
+</body>
+
+</html>

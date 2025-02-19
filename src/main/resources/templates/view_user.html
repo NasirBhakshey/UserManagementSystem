@@ -25,7 +25,9 @@
             <td><span th:text="${view.id}"></span></td>
             <td><span th:text="${view.name}"></span></td>
             <td><span th:text="${view.email}"></span></td>
-            <td><span th:text="${view.roles}"></span></td>
+            <td>
+                <span th:each="role : ${view.roles}" th:text="${role.name}"></span>
+            </td>
             <td><a th:href="@{/api/auth/view/delete/{id}(id=${view.id})}">Delete</a>
                 <a th:href="@{/api/auth/view/edit/{id}(id=${view.id})}">Edit</a>
             </td>

@@ -1,14 +1,20 @@
 package com.project.usermanagementsystem.Services;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.project.usermanagementsystem.Entities.Role;
 import com.project.usermanagementsystem.Entities.User;
 import com.project.usermanagementsystem.Helper.JwtHelper;
+import com.project.usermanagementsystem.Repository.RoleRepository;
 import com.project.usermanagementsystem.Repository.UserRepository;
 
 @Service
@@ -26,12 +32,15 @@ public class UserImplements implements UserInterface {
     @Autowired
     private JwtHelper jwtHelper;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     @Override
     public User InsertUser(User user) {
-
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            user.setRoles("User");
+            Role role = roleRepository.findByName("USER").get();
+            user.getRoles().add(role);
             return userRepository.save(user);
         } catch (Exception e) {
             e.printStackTrace();
@@ -40,16 +49,18 @@ public class UserImplements implements UserInterface {
     }
 
     @Override
-    public boolean updateUser(User user, int id) {
-        User user2=searchbyID(id);
-        if(user2!=null){
+    public boolean updateUser(User user, List<Integer> roleIds, int id) {
+        System.out.println("Id user :" + id);
+        User user2 = searchbyID(id);
+        List<Role> roles = roleRepository.findAllById(roleIds);
+        if (user2 != null) {
             user2.setName(user.getName());
             user2.setEmail(user.getEmail());
             user2.setPassword(passwordEncoder.encode(user.getPassword()));
-            user2.setRoles(user.getRoles());
+            user2.setRoles(roles);
             userRepository.save(user2);
             return true;
-        }else{
+        } else {
             return false;
         }
 
@@ -67,6 +78,7 @@ public class UserImplements implements UserInterface {
             throw new RuntimeException("Invalid password");
         }
         UserDetails userDetails = customUserService.loadUserByUsername(email);
+        System.out.println("Imm Inner");
         return jwtHelper.generateToken(userDetails, user.getRoles());
 
     }
@@ -95,6 +107,26 @@ public class UserImplements implements UserInterface {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public List<Role> getAllRole() {
+       return roleRepository.findAll();
+    }
+
+    @Override
+    public Role InsertRole(Role role) {
+        try {
+            return roleRepository.save(role);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public String getUserrole(int id) {
+        return userRepository.hasUserRole(id);
     }
 
 }

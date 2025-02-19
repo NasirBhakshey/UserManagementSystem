@@ -35,8 +35,11 @@
                 <input type="email" id="email" th:field="*{email}" required>
             </div>
             <div class="input-group">
-                <label for="text">Roles</label>
-                <input type="text" id="roles" th:field="*{roles}" required>
+                <select name="roleIds" multiple>
+                    <option th:each="role : ${rolelist}" th:value="${role.id}" th:text="${role.name}"
+                        th:selected="${user.roles.![id].contains(role.id)}">
+                    </option>
+                </select>
             </div>
             <button type="submit" class="register-button">Register</button>
             <p class="login-link">Already registered? <a href="login">Login</a></p>

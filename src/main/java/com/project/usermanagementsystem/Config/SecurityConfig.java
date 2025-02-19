@@ -45,16 +45,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/loginpage", "/api/auth/login-page", "/api/auth/create-user",
                         "/api/auth/reg-page","/api/auth/dashboard","/api/auth/view-users","/api/auth/delete/{id}",
-                        "/api/auth/view/delete/{id}","/api/auth/view/edit/{id}","/api/auth/view/update")
+                        "/api/auth/view/delete/{id}","/api/auth/view/edit/{id}","/api/auth/view/update",
+                        "/api/auth/role-page","/api/auth/rolepage")
                         .permitAll()
-                        // .requestMatchers("/api/manager/create-manager", "/api/manager/login-manager",
-                        //         "/api/manager/loginmanager", "/api/manager/managerdashboard")
-                        // .permitAll()
-                        // .requestMatchers("/api/admin/create-admin", "/api/admin/loginadmin",
-                        //         "/api/admin/login-admin", "/api/admin/admindashboard")
-                        // .permitAll()
+                        .requestMatchers("/Admin/**").hasRole("ADMIN")
+                        .requestMatchers("/User/**").hasRole("USER")
+                        .requestMatchers("/Manager/**").hasRole("MANAGER")
                         .requestMatchers("/css/**", "/js/**").permitAll()
-                        .anyRequest().authenticated())
+                        .anyRequest().authenticated())  
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

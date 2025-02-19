@@ -1,5 +1,6 @@
 package com.project.usermanagementsystem.Controller;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,12 +16,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.project.usermanagementsystem.Entities.JwtToken;
+import com.project.usermanagementsystem.Entities.Role;
 import com.project.usermanagementsystem.Entities.User;
+import com.project.usermanagementsystem.Repository.RoleRepository;
 import com.project.usermanagementsystem.Repository.UserRepository;
 import com.project.usermanagementsystem.Services.UserImplements;
 
@@ -34,10 +38,13 @@ public class MainController {
     private UserImplements userImplements;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
-    public MainController(UserImplements userImplements, UserRepository userRepository) {
+    public MainController(UserImplements userImplements, UserRepository userRepository, RoleRepository roleRepository) {
         this.userImplements = userImplements;
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     @GetMapping("/reg-page")
@@ -111,29 +118,31 @@ public class MainController {
             JwtToken jwtToken = JwtToken.builder().name(user2.getName()).JwtToken(user1).build();
             return ResponseEntity.status(HttpStatus.OK).body(jwtToken);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password...");
         }
     }
 
     @GetMapping("/dashboard")
     public ModelAndView dashboard(HttpSession session) {
+        System.out.println("User Inner Role :-");
         User user = (User) session.getAttribute("user");
-        String getrole = user.getRoles().toUpperCase();
-        switch (getrole) {
-            case "ADMIN":
-                ModelAndView modelAndView = new ModelAndView("Admin_Dashboard");
-                modelAndView.addObject("admin", user);
-                return modelAndView;
-            case "MANAGER":
-                ModelAndView modelAndView1 = new ModelAndView("manager_dashboard");
-                modelAndView1.addObject("manager", user);
-                return modelAndView1;
-            case "USER":
-                ModelAndView modelAndView2 = new ModelAndView("dashboard");
-                modelAndView2.addObject("user", user);
-                return modelAndView2;
-            default:
-                return new ModelAndView("redirect:/api/auth/loginpage");
+        String role = userImplements.getUserrole(user.getId());
+        System.out.println("User Role :-" + role + "User ID:-" + user.getId());
+
+        if ("ADMIN".equalsIgnoreCase(role)) {
+            ModelAndView modelAndView = new ModelAndView("Admin_Dashboard");
+            modelAndView.addObject("admin", user);
+            return modelAndView;
+        } else if ("MANAGER".equalsIgnoreCase(role)) {
+            ModelAndView modelAndView1 = new ModelAndView("manager_dashboard");
+            modelAndView1.addObject("manager", user);
+            return modelAndView1;
+        } else if ("USER".equalsIgnoreCase(role)) {
+            ModelAndView modelAndView2 = new ModelAndView("dashboard");
+            modelAndView2.addObject("user", user);
+            return modelAndView2;
+        } else {
+            return new ModelAndView("redirect:/api/auth/loginpage");
         }
     }
 
@@ -146,17 +155,19 @@ public class MainController {
     }
 
     @GetMapping("/view/edit/{id}")
-    public ModelAndView Editpage(@PathVariable("id") int id, Model model) {
+    public ModelAndView Editpage(@PathVariable("id") int id) {
         User user = userImplements.searchbyID(id);
+        List<Role> rolelist = userImplements.getAllRole();
         ModelAndView modelAndView = new ModelAndView("update_user");
         modelAndView.addObject("user", user);
+        modelAndView.addObject("rolelist", rolelist);
         return modelAndView;
     }
 
     @PostMapping("/view/update")
-    public ModelAndView updatepage(@ModelAttribute("user") User user,
-            RedirectAttributes redirectAttributes) {
-        boolean update = userImplements.updateUser(user, user.getId());
+    public ModelAndView updatepage(@ModelAttribute("user") User user, @RequestParam(value = "roleIds",required = false) List<Integer> roleIds,
+            RedirectAttributes redirectAttributes, Model model) {
+        boolean update = userImplements.updateUser(user, roleIds, user.getId());
         if (update) {
             redirectAttributes.addFlashAttribute("Successmsg", "User Update SuccessFull....");
         } else {
@@ -194,6 +205,42 @@ public class MainController {
             redirectAttributes.addFlashAttribute("errormsg", "User could not be found!");
         }
         return new ModelAndView("redirect:/api/auth/view-users");
+    }
+
+    @GetMapping("/role-page")
+    public ModelAndView rolePage() {
+        return new ModelAndView("role_page", "role", new Role());
+    }
+
+    @PostMapping(value = "/rolepage")
+    public ModelAndView AssignRoleForm(@ModelAttribute("role") Role role, RedirectAttributes redirectAttributes) {
+        ResponseEntity<?> response = processAssignRegistration(role);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            redirectAttributes.addFlashAttribute("successmsg", "User registered successfully. Please log in.");
+            return new ModelAndView("redirect:/api/auth/dashboard");
+        } else {
+            redirectAttributes.addFlashAttribute("errormsg", response.getBody());
+            return new ModelAndView("redirect:/api/auth/role-page");
+        }
+    }
+
+    @PostMapping(value = "/rolepage", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> AssignRoleJson(@RequestBody Role role) {
+        ResponseEntity<?> response = processAssignRegistration(role);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return ResponseEntity.ok("User registered successfully. Please log in.");
+        }
+        return response;
+    }
+
+    private ResponseEntity<?> processAssignRegistration(Role role) {
+        try {
+            Role savedrole = userImplements.InsertRole(role);
+            return ResponseEntity.status(HttpStatus.OK).body(savedrole);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Error registering user: " + e.getMessage());
+        }
     }
 
 }
