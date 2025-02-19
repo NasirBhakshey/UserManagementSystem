@@ -3,6 +3,7 @@ package com.project.usermanagementsystem.Services;
 import java.util.List;
 import java.util.Set;
 
+import com.project.usermanagementsystem.Entities.AssignTask;
 import com.project.usermanagementsystem.Entities.Role;
 import com.project.usermanagementsystem.Entities.User;
 
@@ -25,5 +26,9 @@ public interface UserInterface {
     public Role InsertRole(Role role);
 
     public String getUserrole(int id);
+
+    public AssignTask InsertTask(AssignTask assignTask,Integer userId);
+
+    public List<AssignTask> getallTask();
 
 }

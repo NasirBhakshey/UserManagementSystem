@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.project.usermanagementsystem.Entities.AssignTask;
 import com.project.usermanagementsystem.Entities.JwtToken;
 import com.project.usermanagementsystem.Entities.Role;
 import com.project.usermanagementsystem.Entities.User;
@@ -165,7 +166,8 @@ public class MainController {
     }
 
     @PostMapping("/view/update")
-    public ModelAndView updatepage(@ModelAttribute("user") User user, @RequestParam(value = "roleIds",required = false) List<Integer> roleIds,
+    public ModelAndView updatepage(@ModelAttribute("user") User user,
+            @RequestParam(value = "roleIds", required = false) List<Integer> roleIds,
             RedirectAttributes redirectAttributes, Model model) {
         boolean update = userImplements.updateUser(user, roleIds, user.getId());
         if (update) {
@@ -241,6 +243,55 @@ public class MainController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Error registering user: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/task-page")
+    public ModelAndView taskPage() {
+        List<User> listuser = userImplements.getlldetails();
+        ModelAndView modelAndView = new ModelAndView("task_page");
+        modelAndView.addObject("listuser", listuser);
+        return modelAndView;
+    }
+
+    @PostMapping(value = "/taskpage")
+    public ModelAndView AssignTaskForm(@ModelAttribute("assignTask") AssignTask assignTask,
+            @RequestParam(value = "userId", required = false) Integer userId, RedirectAttributes redirectAttributes) {
+        ResponseEntity<?> response = processAssignTask(assignTask, userId);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            redirectAttributes.addFlashAttribute("successmsg", "Assign Task to User successfully...");
+            return new ModelAndView("redirect:/api/auth/dashboard");
+        } else {
+            redirectAttributes.addFlashAttribute("errormsg", response.getBody());
+            return new ModelAndView("redirect:/api/auth/task-page");
+        }
+    }
+
+    @PostMapping(value = "/taskpage", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> AssignTaskJson(@RequestBody AssignTask assignTask,
+            @RequestParam(value = "userId", required = false) Integer userId) {
+        ResponseEntity<?> response = processAssignTask(assignTask, userId);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return ResponseEntity.ok("Assign Task to User successfully...");
+        }
+        return response;
+    }
+
+    private ResponseEntity<?> processAssignTask(AssignTask assignTask, Integer userId) {
+        try {
+            AssignTask savedTask = userImplements.InsertTask(assignTask, userId);
+            return ResponseEntity.status(HttpStatus.OK).body(savedTask);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Error registering user: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/view-task")
+    public ModelAndView getallTask(Model model) {
+        List<AssignTask> listTask = userImplements.getallTask();
+        ModelAndView modelAndView = new ModelAndView("view_task");
+        modelAndView.addObject("listTask", listTask);
+        return modelAndView;
     }
 
 }

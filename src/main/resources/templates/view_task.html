@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h3>Assigned Tasks</h3>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Assigned User</th>
+        </tr>
+        <tr th:each="task : ${listTask}">
+            <td th:text="${task.id}"></td>
+            <td th:text="${task.title}"></td>
+            <td th:text="${task.taskDescription}"></td>
+            <td th:text="${task.assignedUser.name}"></td>
+        </tr>
+    </table>+
+</body>
+</html>

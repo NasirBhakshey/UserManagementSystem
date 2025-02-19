@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Admin Dashboard</h2>
+
+    <h3>Assign Task to User</h3>
+    <form th:action="@{/api/auth/taskpage}" th:object="${assignTask}" method="post">
+        <label>Task Title:</label>
+        <input type="text" name="title" required><br><br>
+
+        <label>Description:</label>
+        <textarea name="taskDescription" required></textarea><br><br>
+
+        <label>Select User:</label>
+        <select name="userId">
+            <option th:each="user : ${listuser}" th:value="${user.id}" th:text="${user.name}"></option>
+        </select><br><br>
+
+        <button type="submit">Assign Task</button>
+    </form>
+
+</body>
+</html>

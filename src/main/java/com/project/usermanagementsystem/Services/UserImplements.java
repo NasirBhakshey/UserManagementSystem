@@ -11,10 +11,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.project.usermanagementsystem.Entities.AssignTask;
 import com.project.usermanagementsystem.Entities.Role;
 import com.project.usermanagementsystem.Entities.User;
 import com.project.usermanagementsystem.Helper.JwtHelper;
 import com.project.usermanagementsystem.Repository.RoleRepository;
+import com.project.usermanagementsystem.Repository.TaskRepository;
 import com.project.usermanagementsystem.Repository.UserRepository;
 
 @Service
@@ -34,6 +36,9 @@ public class UserImplements implements UserInterface {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private TaskRepository taskRepository;
 
     @Override
     public User InsertUser(User user) {
@@ -111,7 +116,7 @@ public class UserImplements implements UserInterface {
 
     @Override
     public List<Role> getAllRole() {
-       return roleRepository.findAll();
+        return roleRepository.findAll();
     }
 
     @Override
@@ -127,6 +132,24 @@ public class UserImplements implements UserInterface {
     @Override
     public String getUserrole(int id) {
         return userRepository.hasUserRole(id);
+    }
+
+    @Override
+    public AssignTask InsertTask(AssignTask assignTask, Integer userId) {
+
+        try {
+            User user = searchbyID(userId);
+            assignTask.setAssignedUser(user);
+            return taskRepository.save(assignTask);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<AssignTask> getallTask() {
+        return taskRepository.findAll();
     }
 
 }

@@ -14,8 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.project.usermanagementsystem.Filter.JwtAuthenticateFilter;
-import com.project.usermanagementsystem.Services.CustomAdminService;
-import com.project.usermanagementsystem.Services.CustomManagerService;
+
 import com.project.usermanagementsystem.Services.CustomUserService;
 
 import lombok.RequiredArgsConstructor;
@@ -32,10 +31,6 @@ public class SecurityConfig {
     private final JwtAuthenticateFilter jwtAuthFilter;
     @Autowired
     private final CustomUserService userDetailsService;
-    @Autowired
-    private final CustomAdminService customAdminService;
-    @Autowired
-    private final CustomManagerService customManagerService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -48,6 +43,7 @@ public class SecurityConfig {
                         "/api/auth/view/delete/{id}","/api/auth/view/edit/{id}","/api/auth/view/update",
                         "/api/auth/role-page","/api/auth/rolepage")
                         .permitAll()
+                        .requestMatchers("/api/auth/task-page","/api/auth/taskpage","/api/auth/view-task").permitAll()
                         .requestMatchers("/Admin/**").hasRole("ADMIN")
                         .requestMatchers("/User/**").hasRole("USER")
                         .requestMatchers("/Manager/**").hasRole("MANAGER")
@@ -69,8 +65,6 @@ public class SecurityConfig {
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
-        provider.setUserDetailsService(customAdminService);
-        provider.setUserDetailsService(customManagerService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }

@@ -1,12 +1,9 @@
 package com.project.usermanagementsystem.Entities;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.scheduling.config.Task;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -18,12 +15,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+
 import lombok.Setter;
 
 @Getter
@@ -52,6 +48,9 @@ public class User {
      joinColumns = @JoinColumn(name = "user_id"),
      inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles=new ArrayList<>();
+
+    @OneToMany(mappedBy = "assignedUser", cascade = {CascadeType.PERSIST, CascadeType.MERGE,CascadeType.REFRESH})
+    private List<AssignTask> tasks = new ArrayList<>();
 
     public User(String name, String email, String password) {
         this.name = name;

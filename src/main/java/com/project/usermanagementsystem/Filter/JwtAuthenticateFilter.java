@@ -15,8 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.project.usermanagementsystem.Helper.JwtHelper;
-import com.project.usermanagementsystem.Services.CustomAdminService;
-import com.project.usermanagementsystem.Services.CustomManagerService;
 import com.project.usermanagementsystem.Services.CustomUserService;
 
 import jakarta.servlet.FilterChain;
@@ -34,10 +32,6 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
 
     @Autowired
     private CustomUserService customUserService;
-    @Autowired
-    private CustomAdminService customAdminService;
-    @Autowired
-    private CustomManagerService customManagerService;
 
     private static final Logger log = LoggerFactory.getLogger(JwtAuthenticateFilter.class);
 
