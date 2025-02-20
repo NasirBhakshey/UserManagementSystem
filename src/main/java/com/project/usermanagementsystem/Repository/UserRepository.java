@@ -28,6 +28,11 @@ nativeQuery = true)
                   "JOIN user_roles ur ON u.id = ur.user_id " +
                   "JOIN role r ON ur.role_id = r.id " +
                   "WHERE u.id = :userId", nativeQuery = true)
-   List<Object[]> findUserWithRoles(@Param("userId") Integer userId);
+   public List<Object[]> findUserWithRoles(@Param("userId") Integer userId);
+
+
+
+   @Query("SELECT u FROM User u JOIN u.roles r WHERE r.name = 'USER'")
+   public List<User> findAllUsersWithUserRole();
 
 }

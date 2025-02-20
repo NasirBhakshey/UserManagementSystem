@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,7 +19,7 @@
             color: #333;
         }
 
-        .container {
+        .table-container {
             max-width: 1200px;
             margin: 0 auto;
             background-color: white;
@@ -29,19 +28,19 @@
             overflow: hidden;
         }
 
-        .header {
+        .table-header {
             background: linear-gradient(135deg, #2c3e50, #3498db);
-            padding: 25px;
+            padding: 20px;
             text-align: center;
         }
 
-        h3 {
+        .table-header h2 {
             color: white;
             font-size: 24px;
             margin: 0;
         }
 
-        .table-container {
+        .table-content {
             padding: 20px;
             overflow-x: auto;
         }
@@ -69,6 +68,7 @@
             border-bottom: 1px solid #e9ecef;
             font-size: 14px;
             color: #555;
+            line-height: 1.5;
         }
 
         tr:hover {
@@ -76,38 +76,25 @@
             transition: background-color 0.3s ease;
         }
 
-        .actions {
-            display: flex;
-            gap: 10px;
+        /* Task ID Column */
+        td:first-child {
+            font-weight: 600;
+            color: #3498db;
+            width: 100px;
         }
 
-        .action-link {
-            text-decoration: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 13px;
+        /* Task Title Column */
+        td:nth-child(2) {
             font-weight: 500;
-            transition: all 0.3s ease;
+            color: #2c3e50;
         }
 
-        .delete-btn {
-            background-color: #ff4757;
-            color: white;
-        }
-
-        .edit-btn {
-            background-color: #ffa502;
-            color: white;
-        }
-
-        .delete-btn:hover {
-            background-color: #ff6b81;
-            transform: translateY(-2px);
-        }
-
-        .edit-btn:hover {
-            background-color: #ffb732;
-            transform: translateY(-2px);
+        /* Task Description Column */
+        td:last-child {
+            color: #666;
+            max-width: 400px;
+            white-space: normal;
+            word-wrap: break-word;
         }
 
         /* Animation */
@@ -122,39 +109,8 @@
             }
         }
 
-        .container {
+        .table-container {
             animation: fadeIn 0.4s ease-out;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-            }
-
-            h3 {
-                font-size: 20px;
-            }
-
-            th, td {
-                padding: 10px;
-            }
-
-            .action-link {
-                padding: 4px 8px;
-                font-size: 12px;
-            }
-        }
-
-        /* Status Badge */
-        .status-badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-            background-color: #e9ecef;
-            color: #555;
         }
 
         /* Empty State */
@@ -165,73 +121,93 @@
         }
 
         /* Scrollbar Styling */
-        .table-container::-webkit-scrollbar {
+        .table-content::-webkit-scrollbar {
             height: 8px;
+            width: 8px;
         }
 
-        .table-container::-webkit-scrollbar-track {
+        .table-content::-webkit-scrollbar-track {
             background: #f1f1f1;
             border-radius: 4px;
         }
 
-        .table-container::-webkit-scrollbar-thumb {
+        .table-content::-webkit-scrollbar-thumb {
             background: #888;
             border-radius: 4px;
         }
 
-        .table-container::-webkit-scrollbar-thumb:hover {
+        .table-content::-webkit-scrollbar-thumb:hover {
             background: #555;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .table-container {
+                margin: 10px;
+            }
+
+            .table-header h2 {
+                font-size: 20px;
+            }
+
+            th, td {
+                padding: 12px;
+                font-size: 13px;
+            }
+
+            td:last-child {
+                min-width: 200px;
+            }
+        }
+
+        /* Zebra Striping */
+        tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+
+        /* Task Status Indicator */
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background-color: #2ecc71;
         }
     </style>
 </head>
-
 <body>
-    <div class="container">
-        <div class="header">
-            <h3>Assigned Tasks</h3>
+    <div class="table-container">
+        <div class="table-header">
+            <h2>Task List</h2>
         </div>
 
-        <div class="table-container">
+        <div class="table-content">
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Title</th>
-                        <th>Description</th>
-                        <th>Assigned User</th>
-                        <th>Actions</th>
+                        <th>Task ID</th>
+                        <th>Task Title</th>
+                        <th>Task Description</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="task : ${listTask}">
-                        <td th:text="${task.id}"></td>
-                        <td th:text="${task.title}"></td>
-                        <td th:text="${task.taskDescription}"></td>
                         <td>
-                            <span class="status-badge" th:text="${task.assignedUser.name}"></span>
+                            <span class="status-dot"></span>
+                            <span th:text="${task.id}"></span>
                         </td>
-                        <td>
-                            <div class="actions">
-                                <a class="action-link delete-btn" 
-                                th:href="@{/api/auth/task/delete/{id}(id=${task.id})}">
-                                Delete
-                                </a>
-                                <a class="action-link edit-btn" 
-                                th:href="@{/api/auth/task/edit/{id}(id=${task.id})}">
-                                Edit
-                                </a>
-                            </div>
-                        </td>
+                        <td><span th:text="${task.title}"></span></td>
+                        <td><span th:text="${task.taskDescription}"></span></td>
                     </tr>
                 </tbody>
             </table>
 
             <!-- Empty state message (shown when no tasks) -->
             <div class="empty-state" th:if="${#lists.isEmpty(listTask)}">
-                <p>No tasks assigned yet.</p>
+                <p>No tasks available.</p>
             </div>
         </div>
     </div>
 </body>
-
 </html>

@@ -39,16 +39,16 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/loginpage", "/api/auth/login-page", "/api/auth/create-user",
-                        "/api/auth/reg-page","/api/auth/dashboard","/api/auth/view-users","/api/auth/delete/{id}",
-                        "/api/auth/view/delete/{id}","/api/auth/view/edit/{id}","/api/auth/view/update",
-                        "/api/auth/role-page","/api/auth/rolepage")
+                                "/api/auth/reg-page", "/api/auth/dashboard", "/api/auth/view-users",
+                                "/api/auth/delete/{id}",
+                                "/api/auth/view/delete/{id}", "/api/auth/view/edit/{id}", "/api/auth/view/update",
+                                "/api/auth/role-page", "/api/auth/rolepage","/api/auth/logout","/api/auth/json/logout")
                         .permitAll()
-                        .requestMatchers("/api/auth/task-page","/api/auth/taskpage","/api/auth/view-task").permitAll()
-                        .requestMatchers("/Admin/**").hasRole("ADMIN")
-                        .requestMatchers("/User/**").hasRole("USER")
-                        .requestMatchers("/Manager/**").hasRole("MANAGER")
-                        .requestMatchers("/css/**", "/js/**").permitAll()
-                        .anyRequest().authenticated())  
+                        .requestMatchers("/api/auth/task-page", "/api/auth/taskpage", "/api/auth/view-task",
+                                "/api/auth/task/edit/{id}", "/api/auth/task/delete/{id}", "/api/auth/task/update",
+                                "/api/auth/view-usertask")
+                        .permitAll()
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

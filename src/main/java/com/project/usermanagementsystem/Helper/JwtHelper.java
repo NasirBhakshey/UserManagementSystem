@@ -1,12 +1,10 @@
 package com.project.usermanagementsystem.Helper;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
 import java.util.function.Function;
-import java.util.stream.Collector;
+
 import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
@@ -16,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import com.project.usermanagementsystem.Entities.Role;
-import com.project.usermanagementsystem.Entities.User;
 import com.project.usermanagementsystem.Filter.JwtAuthenticateFilter;
 
 import io.jsonwebtoken.Claims;

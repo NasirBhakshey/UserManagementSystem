@@ -5,14 +5,211 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header-section {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            padding: 40px 30px;
+            color: white;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .manager-name {
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .description {
+            color: #666;
+            font-size: 18px;
+            margin: 25px 0;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .actions-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background-color: #f8f9fa;
+        }
+
+        .action-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-link {
+            display: inline-block;
+            width: 100%;
+            padding: 15px 25px;
+            text-decoration: none;
+            color: white;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .assign-task {
+            background-color: #2ecc71;
+        }
+
+        .assign-task:hover {
+            background-color: #27ae60;
+        }
+
+        .view-task {
+            background-color: #3498db;
+        }
+
+        .view-task:hover {
+            background-color: #2980b9;
+        }
+
+        .logout-container {
+            text-align: center;
+            padding: 20px;
+            background-color: white;
+        }
+
+        .logout-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #e74c3c;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dashboard-container {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                margin: 10px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            .description {
+                font-size: 16px;
+            }
+
+            .actions-container {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+
+            .action-card {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <h2>Welcome Manager Dashboard....<span th:text="${manager.name}"></span>!</h2>
-    <div>
-        <!-- Your dashboard content here -->
-        <a th:href="@{/api/auth/logout}">Logout</a>
+    <div class="dashboard-container">
+        <div class="header-section">
+            <h2>Welcome Manager Dashboard... 
+                <span class="manager-name" th:text="${manager.name}"></span>!
+            </h2>
+        </div>
+
+        <p class="description">You can manage tasks and view users.</p>
+
+        <div class="actions-container">
+            <div class="action-card">
+                <a href="/api/auth/task-page" class="action-link assign-task">
+                    Assign Task
+                </a>
+            </div>
+
+            <div class="action-card">
+                <a href="/api/auth/view-task" class="action-link view-task">
+                    View Assigned Tasks
+                </a>
+            </div>
+        </div>
+
+        <div class="logout-container">
+            <a th:href="@{/api/auth/logout}" class="logout-btn">Logout</a>
+        </div>
     </div>
+
+    <script>
+        fetch('/api/auth/logout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+            .then(response => response.json())  // Expect JSON, not text or HTML
+            .then(data => {
+                alert(data.message);  // Show "Logged out successfully"
+                window.location.href = '/api/auth/loginpage'; // Redirect to login page
+            })
+            .catch(error => console.error('Logout failed:', error));
+    </script>
 </body>
 
 </html>

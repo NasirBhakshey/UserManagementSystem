@@ -1,7 +1,9 @@
 package com.project.usermanagementsystem.Controller;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,8 @@ import com.project.usermanagementsystem.Repository.RoleRepository;
 import com.project.usermanagementsystem.Repository.UserRepository;
 import com.project.usermanagementsystem.Services.UserImplements;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
@@ -98,7 +102,6 @@ public class MainController {
     @PostMapping(value = "/login-page")
     public ResponseEntity<?> loginpage(@RequestBody(required = false) User jsonUser, HttpSession session,
             @ModelAttribute("user") User formUser) {
-
         User user;
         if (jsonUser != null) {
             user = jsonUser;
@@ -139,7 +142,9 @@ public class MainController {
             modelAndView1.addObject("manager", user);
             return modelAndView1;
         } else if ("USER".equalsIgnoreCase(role)) {
+            User user1 = userImplements.searchbyID(user.getId());
             ModelAndView modelAndView2 = new ModelAndView("dashboard");
+            modelAndView2.addObject("user", user1);
             modelAndView2.addObject("user", user);
             return modelAndView2;
         } else {
@@ -193,7 +198,7 @@ public class MainController {
     @GetMapping("/view/delete/{id}")
     public ModelAndView confirmDelete(@PathVariable int id, Model model) {
         User user = userImplements.searchbyID(id);
-        ModelAndView modelAndView = new ModelAndView("delete_confirm");
+        ModelAndView modelAndView = new ModelAndView("confirm_delete_user");
         modelAndView.addObject("user", user);
         return modelAndView;
     }
@@ -247,7 +252,7 @@ public class MainController {
 
     @GetMapping("/task-page")
     public ModelAndView taskPage() {
-        List<User> listuser = userImplements.getlldetails();
+        List<User> listuser = userImplements.getallUser();
         ModelAndView modelAndView = new ModelAndView("task_page");
         modelAndView.addObject("listuser", listuser);
         return modelAndView;
@@ -292,6 +297,74 @@ public class MainController {
         ModelAndView modelAndView = new ModelAndView("view_task");
         modelAndView.addObject("listTask", listTask);
         return modelAndView;
+    }
+
+    @GetMapping("/task/edit/{id}")
+    public ModelAndView EditTask(@PathVariable("id") int id) {
+        AssignTask assignTask = userImplements.searchbyTaskID(id);
+        List<User> userlist = userImplements.getallUser();
+        ModelAndView modelAndView = new ModelAndView("update_task");
+        modelAndView.addObject("assignTask", assignTask);
+        modelAndView.addObject("userlist", userlist);
+        return modelAndView;
+    }
+
+    @PostMapping("/task/update")
+    public ModelAndView updatetask(@ModelAttribute("assignTask") AssignTask assignTask,
+            @RequestParam(value = "assignedUser.id", required = false) Integer userId,
+            RedirectAttributes redirectAttributes, Model model) {
+        System.out.println("User ID:- " + userId);
+        boolean update = userImplements.updateTask(assignTask, assignTask.getId(), userId);
+        if (update) {
+            redirectAttributes.addFlashAttribute("Successmsg", "Task Update SuccessFull....");
+        } else {
+            redirectAttributes.addFlashAttribute("errormsg", "Error While Updating Task...");
+        }
+        return new ModelAndView("redirect:/api/auth/view-task");
+
+    }
+
+    @GetMapping("/task/delete/{id}")
+    public ModelAndView confirmtaskDelete(@PathVariable int id, Model model) {
+        AssignTask assignTask = userImplements.searchbyTaskID(id);
+        ModelAndView modelAndView = new ModelAndView("delete_confirm");
+        modelAndView.addObject("user", assignTask);
+        return modelAndView;
+    }
+
+    @PostMapping("/task/delete/{id}")
+    public ModelAndView deletetaskWithForm(@PathVariable int id, RedirectAttributes redirectAttributes) {
+        boolean deleted = userImplements.deleteTask(id);
+        if (deleted) {
+            redirectAttributes.addFlashAttribute("Successmsg", "User deleted successfully!");
+        } else {
+            redirectAttributes.addFlashAttribute("errormsg", "User could not be found!");
+        }
+        return new ModelAndView("redirect:/api/auth/view-task");
+    }
+
+    @GetMapping("/view-usertask")
+    public ModelAndView getTaskByUser(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        List<AssignTask> listTask = userImplements.getTaskByUser(user);
+        ModelAndView modelAndView = new ModelAndView("view_usertask");
+        modelAndView.addObject("listTask", listTask);
+        return modelAndView;
+    }
+
+    @GetMapping("/json/logout")
+    public ResponseEntity<String> logoutJson(HttpServletRequest request, HttpServletResponse response) {
+        // Remove JWT token (if stored in cookies)
+        response.setHeader("Authorization", ""); 
+        request.getSession().invalidate();// Clear token
+        return ResponseEntity.ok("Logged out successfully");
+    }
+
+    @GetMapping("/logout")
+    public ModelAndView logoutform(HttpServletRequest request, HttpServletResponse response) {
+        response.setHeader("Authorization", ""); 
+        request.getSession().invalidate();// Clear token
+        return new ModelAndView("redirect:/api/auth/loginpage"); // Redirect to login page
     }
 
 }

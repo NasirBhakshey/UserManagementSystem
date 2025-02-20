@@ -5,6 +5,181 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .register-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 35px;
+        }
+
+        .message-container {
+            margin-bottom: 25px;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .register-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            color: #555;
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        input, select {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #4A90E2;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        select[multiple] {
+            min-height: 120px;
+            padding: 8px;
+        }
+
+        option {
+            padding: 8px;
+            margin: 2px 0;
+            border-radius: 4px;
+        }
+
+        option:checked {
+            background-color: #4A90E2;
+            color: white;
+        }
+
+        .register-button {
+            background-color: #4A90E2;
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .register-button:hover {
+            background-color: #357ABD;
+        }
+
+        .login-link {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 15px;
+        }
+
+        .login-link a {
+            color: #4A90E2;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .login-link a:hover {
+            color: #357ABD;
+            text-decoration: underline;
+        }
+
+        [th\:errors] {
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        /* Animation */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .register-container {
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @media (max-width: 480px) {
+            .register-container {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            input, select, .register-button {
+                padding: 10px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -14,34 +189,46 @@
             <h3 class="error-message" th:if="${errormsg}" th:text="${errormsg}"></h3>
         </div>
 
-        <form id="registerform" class="register-form" th:action="@{/api/auth/view/update}" th:object="${user}"
-            method="post">
-            <h2>Register Here</h2>
+        <form id="registerform" class="register-form" th:action="@{/api/auth/view/update}" th:object="${user}" method="post">
+            <h2>Update Registration</h2>
+            
             <div class="input-group">
-                <label for="ID">ID</label>
-                <input type="number" id="id" th:field="*{id}" required>
+                <label for="id">ID</label>
+                <input type="number" id="id" th:field="*{id}" required 
+                       placeholder="Enter ID">
             </div>
+            
             <div class="input-group">
                 <label for="username">Username</label>
-                <input type="text" id="username" th:field="*{name}" required>
+                <input type="text" id="username" th:field="*{name}" required 
+                       placeholder="Enter username">
             </div>
+            
             <div class="input-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" th:field="*{password}" required>
+                <input type="password" id="password" th:field="*{password}" required 
+                       placeholder="Enter password">
                 <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
             </div>
+            
             <div class="input-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" th:field="*{email}" required>
+                <input type="email" id="email" th:field="*{email}" required 
+                       placeholder="Enter email">
             </div>
+            
             <div class="input-group">
-                <select name="roleIds" multiple>
-                    <option th:each="role : ${rolelist}" th:value="${role.id}" th:text="${role.name}"
-                        th:selected="${user.roles.![id].contains(role.id)}">
+                <label for="roles">Select Roles</label>
+                <select name="roleIds" multiple id="roles">
+                    <option th:each="role : ${rolelist}" 
+                            th:value="${role.id}" 
+                            th:text="${role.name}"
+                            th:selected="${user.roles.![id].contains(role.id)}">
                     </option>
                 </select>
             </div>
-            <button type="submit" class="register-button">Register</button>
+
+            <button type="submit" class="register-button">Update</button>
             <p class="login-link">Already registered? <a href="login">Login</a></p>
         </form>
     </div>

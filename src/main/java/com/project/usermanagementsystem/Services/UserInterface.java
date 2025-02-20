@@ -11,7 +11,7 @@ public interface UserInterface {
 
     public User InsertUser(User user);
 
-    public boolean updateUser(User user, List<Integer> roleIds,int id);
+    public boolean updateUser(User user, List<Integer> roleIds, int id);
 
     public String Loginuser(String name, String pass);
 
@@ -27,8 +27,18 @@ public interface UserInterface {
 
     public String getUserrole(int id);
 
-    public AssignTask InsertTask(AssignTask assignTask,Integer userId);
+    public AssignTask InsertTask(AssignTask assignTask, Integer userId);
 
     public List<AssignTask> getallTask();
+
+    public List<User> getallUser();
+
+    public AssignTask searchbyTaskID(int id);
+
+    public boolean deleteTask(int id);
+
+    public boolean updateTask(AssignTask assignTask, int id,Integer userId);
+
+    public List<AssignTask> getTaskByUser(User user);
 
 }

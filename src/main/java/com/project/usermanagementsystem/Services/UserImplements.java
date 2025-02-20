@@ -82,8 +82,8 @@ public class UserImplements implements UserInterface {
         if (!isMatch) {
             throw new RuntimeException("Invalid password");
         }
+        System.out.println("IMM");
         UserDetails userDetails = customUserService.loadUserByUsername(email);
-        System.out.println("Imm Inner");
         return jwtHelper.generateToken(userDetails, user.getRoles());
 
     }
@@ -150,6 +150,52 @@ public class UserImplements implements UserInterface {
     @Override
     public List<AssignTask> getallTask() {
         return taskRepository.findAll();
+    }
+
+    @Override
+    public List<User> getallUser() {
+        return userRepository.findAllUsersWithUserRole();
+    }
+
+    @Override
+    public AssignTask searchbyTaskID(int id) {
+        Optional<AssignTask> optional = taskRepository.findById(id);
+        if (optional.isPresent()) {
+            return optional.get();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean deleteTask(int id) {
+        AssignTask task = searchbyTaskID(id);
+        if (task != null) {
+            taskRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updateTask(AssignTask assignTask, int id, Integer userId) {
+        AssignTask task = searchbyTaskID(id);
+        User user = searchbyID(userId);
+        if (task != null) {
+            task.setTitle(assignTask.getTitle());
+            task.setTaskDescription(assignTask.getTaskDescription());
+            task.setAssignedUser(user);
+            taskRepository.save(task);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public List<AssignTask> getTaskByUser(User user) {
+        return taskRepository.findByAssignedUser(user);
     }
 
 }
