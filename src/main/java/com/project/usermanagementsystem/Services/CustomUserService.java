@@ -37,7 +37,7 @@ public class CustomUserService implements UserDetailsService {
                     mapRolesToAuthorities(user.getRoles())
             );
     }
-
+    
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(List<Role> roles) {
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
