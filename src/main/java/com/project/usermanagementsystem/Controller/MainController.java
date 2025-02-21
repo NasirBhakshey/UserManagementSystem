@@ -1,9 +1,6 @@
 package com.project.usermanagementsystem.Controller;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +24,6 @@ import com.project.usermanagementsystem.Entities.AssignTask;
 import com.project.usermanagementsystem.Entities.JwtToken;
 import com.project.usermanagementsystem.Entities.Role;
 import com.project.usermanagementsystem.Entities.User;
-import com.project.usermanagementsystem.Repository.RoleRepository;
 import com.project.usermanagementsystem.Repository.UserRepository;
 import com.project.usermanagementsystem.Services.UserImplements;
 
@@ -43,13 +39,10 @@ public class MainController {
     private UserImplements userImplements;
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private RoleRepository roleRepository;
 
-    public MainController(UserImplements userImplements, UserRepository userRepository, RoleRepository roleRepository) {
+    public MainController(UserImplements userImplements, UserRepository userRepository) {
         this.userImplements = userImplements;
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
     }
 
     @GetMapping("/reg-page")

@@ -1,9 +1,6 @@
 package com.project.usermanagementsystem.Filter;
 
 import java.io.IOException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,7 +30,8 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserService customUserService;
 
-    private static final Logger log = LoggerFactory.getLogger(JwtAuthenticateFilter.class);
+    // private static final Logger log =
+    // LoggerFactory.getLogger(JwtAuthenticateFilter.class);
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,

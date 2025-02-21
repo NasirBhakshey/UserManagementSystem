@@ -8,13 +8,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import com.project.usermanagementsystem.Entities.Role;
-import com.project.usermanagementsystem.Filter.JwtAuthenticateFilter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -27,7 +25,7 @@ public class JwtHelper {
     private long JWT_VALIDITY_TOKEN = 1000 * 60 * 60;
     private String SECRET_KEY = "mysecret%$h@f#ghfg*&fhgfdxgdfgdggdfgfdgdf";
 
-    private static final Logger log = LoggerFactory.getLogger(JwtAuthenticateFilter.class);
+    // private static final Logger log = LoggerFactory.getLogger(JwtAuthenticateFilter.class);
 
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
