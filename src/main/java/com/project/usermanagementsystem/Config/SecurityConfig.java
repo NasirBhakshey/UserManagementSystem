@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import com.project.usermanagementsystem.Filter.JwtAuthenticateFilter;
 
@@ -38,15 +39,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/loginpage", "/api/auth/login-page", "/api/auth/create-user",
-                                "/api/auth/reg-page", "/api/auth/dashboard", "/api/auth/view-users",
-                                "/api/auth/delete/{id}",
-                                "/api/auth/view/delete/{id}", "/api/auth/view/edit/{id}", "/api/auth/view/update",
-                                "/api/auth/role-page", "/api/auth/rolepage","/api/auth/logout","/api/auth/json/logout")
-                        .permitAll()
-                        .requestMatchers("/api/auth/task-page", "/api/auth/taskpage", "/api/auth/view-task",
-                                "/api/auth/task/edit/{id}", "/api/auth/task/delete/{id}", "/api/auth/task/update",
-                                "/api/auth/view-usertask")
+                        .requestMatchers("/api/auth/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session

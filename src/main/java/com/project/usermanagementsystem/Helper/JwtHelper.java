@@ -41,10 +41,12 @@ public class JwtHelper {
                 .compact();
     }
 
-    public String extractRole(String token) {
+    public List<String> extractRole(String token) {
         Claims claims = extractAllClaims(token);
         System.out.println("🔹 Extracted JWT Claims: " + claims); // Print all claims for debugging
-        return claims.get("roles", String.class);
+        return ((List<?>) claims.get("roles")).stream()
+        .map(Object::toString) // Ensure all elements are String
+        .collect(Collectors.toList());
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {

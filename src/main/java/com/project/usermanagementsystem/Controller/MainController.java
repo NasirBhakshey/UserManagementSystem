@@ -27,6 +27,7 @@ import com.project.usermanagementsystem.Entities.User;
 import com.project.usermanagementsystem.Repository.UserRepository;
 import com.project.usermanagementsystem.Services.UserImplements;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -94,7 +95,7 @@ public class MainController {
 
     @PostMapping(value = "/login-page")
     public ResponseEntity<?> loginpage(@RequestBody(required = false) User jsonUser, HttpSession session,
-            @ModelAttribute("user") User formUser) {
+            @ModelAttribute("user") User formUser, HttpServletResponse response) {
         User user;
         if (jsonUser != null) {
             user = jsonUser;
@@ -107,12 +108,19 @@ public class MainController {
                     .body("Email and password are required");
         }
         try {
-            String user1 = userImplements.Loginuser(user.getEmail(), user.getPassword());
-
+            String token = userImplements.Loginuser(user.getEmail(), user.getPassword());
             User user2 = userRepository.findByemail(user.getEmail()).get();
 
             session.setAttribute("user", user2);
-            JwtToken jwtToken = JwtToken.builder().name(user2.getName()).JwtToken(user1).build();
+
+            JwtToken jwtToken = JwtToken.builder().name(user2.getName()).JwtToken(token).build();
+            
+            Cookie cookie = new Cookie("token", token);
+            cookie.setHttpOnly(true);
+            cookie.setSecure(true); // Set true for HTTPS
+            cookie.setPath("/");
+            cookie.setMaxAge(24 * 60 * 60); // 1 day expiration
+            response.addCookie(cookie);
             return ResponseEntity.status(HttpStatus.OK).body(jwtToken);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password...");
@@ -348,15 +356,23 @@ public class MainController {
     @GetMapping("/json/logout")
     public ResponseEntity<String> logoutJson(HttpServletRequest request, HttpServletResponse response) {
         // Remove JWT token (if stored in cookies)
-        response.setHeader("Authorization", ""); 
-        request.getSession().invalidate();// Clear token
+
+        Cookie cookie = new Cookie("token", "");
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0); // Delete immediately
+        response.addCookie(cookie);
         return ResponseEntity.ok("Logged out successfully");
     }
 
     @GetMapping("/logout")
     public ModelAndView logoutform(HttpServletRequest request, HttpServletResponse response) {
-        response.setHeader("Authorization", ""); 
-        request.getSession().invalidate();// Clear token
+
+        Cookie cookie = new Cookie("token", "");
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0); // Delete immediately
+        response.addCookie(cookie);
         return new ModelAndView("redirect:/api/auth/loginpage"); // Redirect to login page
     }
 
