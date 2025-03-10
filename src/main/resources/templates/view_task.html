@@ -116,6 +116,7 @@
                 opacity: 0;
                 transform: translateY(10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -136,7 +137,8 @@
                 font-size: 20px;
             }
 
-            th, td {
+            th,
+            td {
                 padding: 10px;
             }
 
@@ -212,13 +214,12 @@
                         </td>
                         <td>
                             <div class="actions">
-                                <a class="action-link delete-btn" 
-                                th:href="@{/api/auth/task/delete/{id}(id=${task.id})}">
-                                Delete
+                                <a class="action-link delete-btn"
+                                    th:href="@{/api/auth/task/delete/{id}(id=${task.id})}">
+                                    Delete
                                 </a>
-                                <a class="action-link edit-btn" 
-                                th:href="@{/api/auth/task/edit/{id}(id=${task.id})}">
-                                Edit
+                                <a class="action-link edit-btn" th:href="@{/api/auth/task/edit/{id}(id=${task.id})}">
+                                    Edit
                                 </a>
                             </div>
                         </td>
@@ -232,6 +233,8 @@
             </div>
         </div>
     </div>
+
+
 </body>
 
 </html>

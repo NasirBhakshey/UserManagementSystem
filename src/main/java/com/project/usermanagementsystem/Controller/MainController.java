@@ -114,7 +114,7 @@ public class MainController {
             session.setAttribute("user", user2);
 
             JwtToken jwtToken = JwtToken.builder().name(user2.getName()).JwtToken(token).build();
-            
+
             Cookie cookie = new Cookie("token", token);
             cookie.setHttpOnly(true);
             cookie.setSecure(true); // Set true for HTTPS
